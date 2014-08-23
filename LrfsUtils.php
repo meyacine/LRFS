@@ -47,7 +47,7 @@ class LrfsUtils {
 	 */
 	public function parseDatabasePropetiesFile()
 	{
-		$filePointer = fopen("lrfs.properties", "r");
+		$filePointer = fopen("./lrfs.properties", "r");
 		while (!feof($filePointer))
 		{
 			$data = fgets($filePointer,4096);

@@ -47,15 +47,32 @@
 	        </li>
 	      </ul>
 	      <ul class="nav navbar-nav navbar-right">
-	        <li><a href="#">&Agrave; propos</a></li>
+	        <li><a data-toggle="modal" data-target="#aPropos">&Agrave; propos</a></li>
 	      </ul>
 	    </div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
-	</nav>
+	</nav>	
+	<!-- Modal -->
+	<div class="modal fade" id="aPropos" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	        <h4 class="modal-title" id="myModalLabel">&Agrave; propos du Developpeur</h4>
+	      </div>
+	      <div class="modal-body">
+	        <H3>Maamar Yacine MEDDAH</H3>
+	        <p><b>Tel: </b>+33 (0)6 58 66 85 67</p>
+	        <p><b>Email: </b>my.meddah@gmail.com</p>
+	        <p><b>Technical support : skype : ycn.ceh or Viber</p>
+	        <p><b>GitHub : </b><a href="https://github.com/meyacine/">https://github.com/meyacine/</a></p>
+	        <p><b>LinkedIn : </b><a href="https://www.linkedin.com/pub/maamar-yacine-meddah/84/699/583">https://www.linkedin.com/pub/maamar-yacine-meddah/84/699/583</a></p>
+	        <p>This sofware is a gift for Daddy Mr. Abdelkrim MEDDAH :) any reproduction is illegal ;)</p>        
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 </body>
-<?php
-	require_once 'LrfsUtils.php';
-	$lrfsUtils = new LrfsUtils();
-	$lrfsUtils->parseDatabasePropetiesFile();
-	
-?>
