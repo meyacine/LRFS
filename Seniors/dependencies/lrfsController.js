@@ -45,7 +45,18 @@
 			}
 		}
 	});
-	lrfsController.controller('NewClubCtrl', function($scope, $http, $templateCache){});
+	lrfsController.controller('NewClubCtrl', function($scope, $http, $templateCache){
+		this.nomClub="";
+		this.nomCompletClub="";
+		this.adressClub="";
+		this.dateCreationClub="";
+		this.numAgrement="";
+		this.numTel="";
+		this.numFax="";
+		this.emailClub="";
+		this.photoClub="";
+		//alert('hh');
+	});
 	lrfsController.controller('EditClubCtrl', function($scope, $http, $templateCache){});
 	lrfsController.controller('StatClubCtrl', function($scope, $http, $templateCache){});
 	lrfsController.controller('NewJoueurCtrl', function($scope, $http, $templateCache){});

@@ -7,22 +7,39 @@
 		ng-controller="NewDivisionCtrl as newDivCtrl"
 		ng-submit="newDivision.$valid && newDivCtrl.checkFormular()"
 		novalidate>
-		<div class="form-group">
-			<div class="input-group">
-				<div class="input-group-addon">Libell&eacute; :</div>
-				<input class="form-control" type="text" id="libDiv" name="libDiv"
-					ng-model="newDivCtrl.libDiv" required>
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="input-group">
-				<div class="input-group-addon">Ligue :</div>
-				<select class="form-control" id="matLigue" name="matLigue"
-					ng-model="newDivCtrl.matLigue" required>
-					<option value="1">R&eacute;gionale</option>
-				</select>
-			</div>
-		</div>
-		<button type="submit" class="btn btn-default">Ajouter</button>
+		<table align="center">
+			<tr align="justify">
+				<td>
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon">Libell&eacute; :</div>
+							<input class="form-control" type="text" id="libDiv" name="libDiv"
+								ng-model="newDivCtrl.libDiv" required>
+						</div>
+						<p ng-show="newDivision.libDiv.$invalid && newDivision.libDiv.$dirty" class="help-block">Veuillez remplir le libell&eacute; de la
+							division svp!</p>
+					</div>
+				</td>
+			</tr>
+			<tr align="justify">
+				<td>
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon">Ligue :</div>
+							<select class="form-control" id="matLigue" name="matLigue"
+								ng-model="newDivCtrl.matLigue" required>
+								<option value="1">R&eacute;gionale</option>
+							</select>
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr align="right">
+				<td>
+					<button type="submit" class="btn btn-default">Ajouter</button>
+				</td>
+			</tr>
+		</table>
+
 	</form>
 </div>
