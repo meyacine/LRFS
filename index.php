@@ -76,8 +76,3 @@
 	  </div>
 	</div>
 </body>
-<?php
-	require_once 'LrfsUtils.php';
-	$lrfsUtils = new LrfsUtils();
-	$lrfsUtils->init("chekla");	
-?>

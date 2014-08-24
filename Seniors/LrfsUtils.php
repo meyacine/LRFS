@@ -53,7 +53,7 @@ class LrfsUtils {
 	 */
 	public function parseDatabasePropetiesFile()
 	{
-		$filePointer = fopen("./lrfs.properties", "r");
+		$filePointer = fopen("../conf.properties", "r");
 		while (!feof($filePointer))
 		{
 			$data = fgets($filePointer,4096);
@@ -199,6 +199,8 @@ class LrfsUtils {
 	 * this method initiale db_connection
 	 */
 	public function init($db){
+		ini_set('max_execution_time','3600');// we initialise max execution time of the apache server to 60 minutes*60
+		ini_set('memory_limit','2048M');// we initialise max memory size of the apache server to 2 GB
 		$this->parseDatabasePropetiesFile();
 		$dsn = "mysql:dbname=information_schema;host=".$this->host;
 		switch ($this->port){
@@ -342,8 +344,10 @@ class LrfsUtils {
 					
 			."CREATE TABLE IF NOT EXISTS validite ( "
 			."DD date DEFAULT NULL, "
-			."DF date DEFAULT NULL "
-			.") ENGINE=MyISAM DEFAULT CHARSET=latin1; "
+			."DF date DEFAULT NULL, "
+			."UNIQUE KEY `unique_index` (`DD`,`DF`) "
+			.") ENGINE=MyISAM DEFAULT CHARSET=latin1 "			
+			."; "
 					
 			."INSERT IGNORE INTO validite (DD, DF) VALUES ('".$this->validiteMin."', '".$this->validiteMax."'); "
 					
@@ -410,6 +414,26 @@ class LrfsUtils {
 		}
 	}
 	
-	
+	/**
+	 * we connect to the mysql connexion using propeties parameters
+	 * @param $db
+	 */
+	public function databaseConnect($db){
+		$this->parseDatabasePropetiesFile();
+		switch ($this->port){
+			case "3306": {
+				// mysql specific
+				$dsn = "mysql:dbname=".$db.";host=".$this->host;
+				break;
+			}
+		}
+		$user = $this->user;
+		$password = $this->password;
+		try {
+			$this->dbc = new PDO($dsn, $user, $password);
+		} catch (PDOException $e) {
+			echo 'Connexion failed : ' . $e->getMessage();
+		}
+	}
 }
 ?>
