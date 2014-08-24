@@ -1,0 +1,31 @@
+[
+{
+  "onglet": "Divisions",
+  "pages": [
+	{ "name": "nouvelle", "url": "/newDivision" }
+  ]
+},
+{
+  "onglet": "Clubs",
+  "pages": [
+	{ "name": "Nouveau", "url": "/newClubs" },
+	{ "name": "Edition", "url": "/editClubs" },
+	{ "name": "Statistics", "url": "/statClubs" }
+  ]
+},
+{
+  "onglet": "Joueurs",
+  "pages": [
+	{ "name": "Nouveau", "url": "/newJoueurs" },
+	{ "name": "Edition", "url": "/editJoueurs" },
+	{ "name": "Controle de Duplication", "url": "/ctrlDuplicationJoueurs" }
+  ]
+},
+{
+  "onglet": "Statistiques",
+  "pages": [
+	{ "name": "Details", "url": "/detailsStats" },
+	{ "name": "Graphique", "url": "/graphicStats" }
+  ]
+}
+]
