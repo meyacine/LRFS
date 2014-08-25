@@ -24,6 +24,7 @@
 	app.directive('clubsList', function(){
 		return {
 			restrict: 'E',
+			require: 'ngModel',
 			templateUrl: './clubs/clubs-list.html',
 			controller:function($scope,$http){
 				var clubsList = this;
@@ -51,6 +52,7 @@
 	app.directive('divisionsList', function(){
 		return {
 			restrict: 'E',
+			require: 'ngModel',
 			templateUrl: './divisions/divisions-list.html',
 			controller:function($scope,$http){
 				var divisionsList = this;
@@ -74,10 +76,39 @@
 			controllerAs: 'divisionsListCtrl'
 		};
 	});
+	// directive pour la liste des saisons
+	app.directive('saisonsList', function(){
+		return {
+			restrict: 'E',
+			require: 'ngModel',
+			templateUrl: 'saisons-list.html',
+			controller:function($scope,$http){
+				var saisonsList = this;
+				saisonsList.list = [];
+				$scope.method = 'GET';
+			    $scope.url = "./controller.php?method=gsl";
+			    $scope.data = "";
+			    $http(
+		        		{
+				            method: $scope.method, 
+				            url: $scope.url,
+				            headers: {'Content-Type': 'application/json'}
+		        		}).
+		        success(
+		        		function(response) 
+		        		{
+		        			saisonsList.list = response;				        			
+		        		}			        		
+        		).error(function(response) {$scope.data = response || "Request failed";});
+			},
+			controllerAs: 'saisonsListCtrl'
+		};
+	});
 	// directive pour la liste des wilayas
 	app.directive('wilayasList', function(){
 		return {
 			restrict: 'E',
+			require: 'ngModel',
 			templateUrl: 'wilayas-list.html',
 			controller:function($scope,$http){
 				var wilayasList = this;
@@ -105,6 +136,7 @@
 	app.directive('liguesList', function(){
 		return {
 			restrict: 'E',
+			require: 'ngModel',
 			templateUrl: 'ligues-list.html',
 			controller:function($scope,$http){
 				var liguesList = this;
@@ -127,5 +159,20 @@
 			},
 			controllerAs: 'liguesListCtrl'
 		};
+	});
+	// validation des input de type fichier
+	app.directive('validFile',function(){
+		  return {
+		    require:'ngModel',
+		    link:function(scope,el,attrs,ngModel){
+		      //change event is fired when file is selected
+		      el.bind('change',function(){
+		        scope.$apply(function(){
+		          ngModel.$setViewValue(el.val());
+		          ngModel.$render();
+		        });
+		      });
+		    }
+		  }
 	});
 })();

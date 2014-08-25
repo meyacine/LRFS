@@ -28,6 +28,57 @@ class ControllerSvc{
 	}	
 	
 	/**
+	 * Cette methode permet d'inserer un club dans la bd
+	 * @param  $matDivision
+	 * @param  $matLigue
+	 * @param  $matWilaya
+	 * @param  $nomClub
+	 * @param  $nomCompletClub
+	 * @param  $adressClub
+	 * @param  $dateCreationClub
+	 * @param  $numAgrement
+	 * @param  $numTel
+	 * @param  $numFax
+	 * @param  $emailClub
+	 * @param  $photoClub
+	 * @param  $matSaison
+	 */
+	public static function insertClub($matDivision, $matLigue, $matWilaya, $nomClub, $nomCompletClub, $adressClub, $dateCreationClub, $numAgrement, $numTel, $numFax, $emailClub, $photoClub, $matSaison){
+		// Establishing db connection
+		$utils = new LrfsUtils();
+		$utils->parseDatabasePropetiesFile();
+		$utils->databaseConnect($utils->seniorsDatabaseName);
+		// gathering data
+		$stmt = $utils->dbc->prepare("SELECT count(*) as nbrClub from club");
+		$stmt->execute();
+		$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
+		$matClub= $results[0]['nbrClub']+1;// we get the new club matricule here
+		// On insere dans cette partie
+		$stmt = $utils->dbc->prepare("INSERT INTO club VALUES(
+				\"".$matClub."\", 
+				\"".$matLigue."\",
+				\"".$matWilaya."\",
+				\"".$nomClub."\",
+				\"".$nomCompletClub."\",
+				\"".$adressClub."\",
+				\"".$dateCreationClub."\",
+				\"".$numAgrement."\",
+				\"".$numTel."\",
+				\"".$numFax."\", 
+				\"".$emailClub."\", 
+				\"".$photoClub."\")"
+		);
+		$stmt->execute();
+		// On insere dans la table CDS
+		$stmt = $utils->dbc->prepare("INSERT INTO cds VALUES(
+				\"".$matClub."\",
+				\"".$matDivision."\",
+				\"".$matSaison."\"
+		)"
+		);
+		$stmt->execute();
+	}
+	/**
 	 * Cette méthode retourne la liste des clubs
 	 */
 	public static function getClubsList(){
@@ -60,6 +111,26 @@ class ControllerSvc{
 				"SELECT MAT_DIV as matDivision, LIB_DIV as libDivision "
 				."FROM DIVISION "
 				."ORDER BY matDivision ASC"
+		);
+		$stmt->execute();
+		$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
+		$utils = null;
+		$json=ControllerSvc::convertSqlResultToJson($results);
+		echo $json;
+	}
+	/**
+	 * Cette méthode retourne la liste des saisons
+	 */
+	public static function getSaisonsList(){
+		// Establishing db connection
+		$utils= new LrfsUtils();
+		$utils->parseDatabasePropetiesFile();
+		$utils->databaseConnect($utils->seniorsDatabaseName);
+		// gathering data
+		$stmt = $utils->dbc->prepare(
+				"SELECT MAT_SAI as matSaison, DAT_DEB_SAI as dateSaison "
+				."FROM SAISON "
+				."ORDER BY matSaison ASC"
 		);
 		$stmt->execute();
 		$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -146,12 +217,20 @@ switch($method){
 		ControllerSvc::insertDivision($libDiv, $matLigue);
 		break;
 	}
+	case "ic":{
+		ControllerSvc::insertClub($matDivision, $matLigue, $matWilaya, $nomClub, $nomCompletClub, $adressClub, $dateCreationClub, $numAgrement, $numTel, $numFax, $emailClub, $photoClub, $matSaison);
+		break;
+	}
 	case "gcl":{
 		ControllerSvc::getClubsList();
 		break;
 	}
 	case "gdl":{
 		ControllerSvc::getDivisionsList();
+		break;
+	}
+	case "gsl":{
+		ControllerSvc::getSaisonsList();
 		break;
 	}
 	case "gll":{

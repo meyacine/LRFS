@@ -26,10 +26,7 @@
 					<div class="form-group">
 						<div class="input-group">
 							<div class="input-group-addon">Ligue :</div>
-							<select class="form-control" id="matLigue" name="matLigue"
-								ng-model="newDivCtrl.matLigue" required>
-								<option value="1">R&eacute;gionale</option>
-							</select>
+							<ligues-list></ligues-list>
 						</div>
 					</div>
 				</td>

@@ -10,8 +10,8 @@
 <div style="text-align: center" class="fadeInDown animated">
 	<form class="form-inline" role="form" name="newClub"
 		ng-controller="NewClubCtrl as newClubCtrl"
-		ng-submit="newClub.$valid" novalidate>
-		<table>
+		ng-submit="newClub.$valid &&  newClubCtrl.formSubmitted()" novalidate>
+		<table class="table">
 			<tr align="justify">
 				<td>
 					<div class="form-group">
@@ -87,6 +87,10 @@
 								name="numAgrement" ng-model="newClubCtrl.numAgrement" required
 								ng-pattern="/^(\d{1,9})?$/">
 						</div>
+						<p
+							ng-show="newClub.numAgrement.$invalid && newClub.numAgrement.$dirty"
+							class="text-danger">Le num&eacute;ro d'agrement doit &ecirc;tre
+							uniquement num&eacute;rique!</p>
 					</div>
 				</td>
 				<td>
@@ -99,7 +103,10 @@
 								ng-pattern="/^(?:(?:\(?(?:00|\+)(213)\)?)?)?[1-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/">
 						</div>
 						<p ng-show="newClub.numTel.$invalid && newClub.numTel.$dirty"
-							class="help-block">Le num&eacute;ro de telephone doit respecter le format<br> 00213775505021 ou (00213)775505021 ou 775505021</p>
+							class="help-block">
+							Le num&eacute;ro de telephone doit respecter le format<br>
+							00213775505021 ou (00213)775505021 ou 775505021
+						</p>
 					</div>
 				</td>
 			</tr>
@@ -111,10 +118,12 @@
 							<input class="form-control" type="text" id="numFax" name="numFax"
 								ng-model="newClubCtrl.numFax" required
 								ng-pattern="/^(?:(?:\(?(?:00|\+)(213)\)?)?)?[1-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]$/">
-							<p ng-show="newClub.numFax.$invalid && newClub.numFax.$dirty"
-							class="help-block">Veuillez remplir le libell&eacute; de la
-							division svp!</p>	
 						</div>
+						<p ng-show="newClub.numFax.$invalid && newClub.numFax.$dirty"
+							class="help-block">
+							Le num&eacute;ro de fax doit respecter le format<br>
+							00213775505021 ou (00213)775505021 ou 775505021
+						</p>
 					</div>
 				</td>
 				<td>
@@ -131,15 +140,23 @@
 					<div class="form-group">
 						<div class="input-group">
 							<input type="file" id="photoClub" name="photoClub"
-								ng-model="newClubCtrl.photoClub" required>
+								ng-model="newClubCtrl.photoClub" valid-file required>
 							<p class="help-block">Utiliser une image Gif, Png ou Jpeg pour le
 								logo svp!</p>
 						</div>
 					</div>
 				</td>
 			</tr>
-			<tr>
-				<td colspan="2">&nbsp;</td>
+			<tr align="right">
+				<td>&nbsp;</td>
+				<td>
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon">Saison :</div>
+							<saisons-list></saisons-list>
+						</div>
+					</div>
+				</td>
 				<td>
 					<button type="submit" class="btn btn-default">Ajouter</button>
 				</td>
