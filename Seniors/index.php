@@ -34,8 +34,6 @@
 <!-- amCharts javascript sources -->
 <script type="text/javascript" src="../js/amcharts.js"></script>
 <script type="text/javascript" src="../js/pie.js"></script>
-<script type="text/javascript" src="../js/angular-file-upload.js"></script>
-<script type="text/javascript" src="../js/upload.js"></script>
 <script src="dependencies/app.js"></script>
 <script src="dependencies/lrfsDirectives.js"></script>
 <script src="dependencies/lrfsController.js"></script>

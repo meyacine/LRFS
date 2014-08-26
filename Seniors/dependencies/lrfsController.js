@@ -3,7 +3,7 @@
  */
 
 (function(){
-	var lrfsController = angular.module('lrfsController', ['angularFileUpload']);
+	var lrfsController = angular.module('lrfsController', []);
 	lrfsController.controller('NewDivisionCtrl', function($scope, $http, $templateCache){
 		this.libDiv = "";
 		this.matLigue = "";
@@ -45,7 +45,7 @@
 			}
 		}
 	});
-	lrfsController.controller('NewClubCtrl', function($scope, $http, $templateCache, $upload){
+	lrfsController.controller('NewClubCtrl', function($scope, $http, $templateCache){
 		$scope.photoClub=""
 		this.method="ic";
 		this.nomClub="";
@@ -113,7 +113,12 @@
 	        		}
 			).
 	        error(function(response) {
-	            $scope.data = response || "Request failed";
+	            $('#msg').
+						html(
+						"<div class=\"alert alert-error alert-dissimible\" role=\"alert\">"
+			    			+"<button type=\"button\" class=\"close\" data-dismiss=\"alert\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Fermer</span></button>"
+			    		    +"<strong>Erreur</strong> "+response+
+					    +"</div>");
 	        });
 		}
 	});
