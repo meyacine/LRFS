@@ -8,7 +8,7 @@
 </blockquote>
 <div id="msg"></div>
 <div style="text-align: center" class="fadeInDown animated">
-	<form class="form-inline" role="form" name="newClub"
+	<form class="form-inline" role="form" name="newClub" enctype="multipart/form-data"
 		ng-controller="NewClubCtrl as newClubCtrl"
 		ng-submit="newClub.$valid &&  newClubCtrl.formSubmitted()" novalidate>
 		<table class="table">
@@ -140,8 +140,8 @@
 					<div class="form-group">
 						<div class="input-group">
 							<input type="file" id="photoClub" name="photoClub"
-								ng-model="newClubCtrl.photoClub" valid-file required>
-							<p class="help-block">Utiliser une image Gif, Png ou Jpeg pour le
+								ng-model="newClubCtrl.photoClub" accept="image/x-png, image/gif, image/jpeg, image/jpg" valid-file required>
+     						<p class="help-block">Utiliser une image Gif, Png ou Jpeg pour le
 								logo svp!</p>
 						</div>
 					</div>

@@ -53,6 +53,7 @@ class ControllerSvc{
 		$stmt->execute();
 		$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$matClub= $results[0]['nbrClub']+1;// we get the new club matricule here
+		$uploaddir = './imgs/clubs/';
 		// On insere dans cette partie
 		$stmt = $utils->dbc->prepare("INSERT INTO club VALUES(
 				\"".$matClub."\", 
@@ -66,7 +67,7 @@ class ControllerSvc{
 				\"".$numTel."\",
 				\"".$numFax."\", 
 				\"".$emailClub."\", 
-				\"".$photoClub."\")"
+				\"".$uploaddir.$nomClub."_".$photoClub."\")"
 		);
 		$stmt->execute();
 		// On insere dans la table CDS
@@ -211,7 +212,8 @@ class ControllerSvc{
  *  This part of code is kind of handler whish get from the url the method to call
  */
 $method="";// i set the method to empty string, to avoid the undefined exeption
-extract($_GET);
+if (isset($_GET)) extract($_GET);
+if (isset($_POST)) extract($_POST);
 switch($method){
 	case "id":{
 		ControllerSvc::insertDivision($libDiv, $matLigue);
