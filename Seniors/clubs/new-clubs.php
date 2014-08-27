@@ -11,6 +11,7 @@
 	<form class="form-inline" role="form" name="newClub" enctype="multipart/form-data"
 		ng-controller="NewClubCtrl as newClubCtrl"
 		ng-submit="newClub.$valid &&  newClubCtrl.formSubmitted()" novalidate>
+		<input type="hidden" name="method" value="ic"/>
 		<table class="table">
 			<tr align="justify">
 				<td>

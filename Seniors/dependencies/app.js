@@ -23,7 +23,7 @@
       }).
 	when('/newJoueurs', {
         templateUrl: 'joueurs/new-joueurs.php',
-        controller: 'NewJoueurCtrl'
+        controller: 'NewMembreCtrl'
       }).
 	when('/editJoueurs', {
         templateUrl: 'joueurs/edit-joueurs.php',

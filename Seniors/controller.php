@@ -79,6 +79,98 @@ class ControllerSvc{
 		);
 		$stmt->execute();
 	}
+	
+	public static function insertMembre($matDivision, $matClub, $matWilaya, $nomMembre, $prenomMembre, $dateNaissanceMembre, $communeNaissanceMembre, $numAct, $parentMembre, $adrMembre, $groupSanguin, $finValidite, $duree, $dossard, $photoMembre, $matSaison){
+		// Establishing db connection
+		$utils = new LrfsUtils();
+		$utils->parseDatabasePropetiesFile();
+		$utils->databaseConnect($utils->seniorsDatabaseName);
+		//TODO controle duplication (criteres nom prenom date de naissance)
+		$query = "SELECT membre.mat_mem AS idMembre, nom_club " 
+				."FROM Membre, club, cmsl "
+				."WHERE ((nom_mem =\"".$nomMembre."\") AND "
+				."(pre_mem=\"".$prenomMembre."\") AND "
+				."(ddn_mem=\"".$dateNaissanceMembre."\") AND "
+				."(membre.mat_mem = cmsl.mat_mem) AND (cmsl.mat_club) = (club.mat_club))";
+		$stmt = $utils->dbc->prepare($query);
+		$stmt->execute();
+		$resultsDuplication=$stmt->fetchAll(PDO::FETCH_ASSOC);
+		$duplication = sizeof($resultsDuplication);
+		// Si aucun n'existe avec les meme coordonnée on insere sinon rejet
+		if ($duplication==0){
+			// gathering data
+			$stmt = $utils->dbc->prepare("SELECT count(*) as nbrMembre from Membre");
+			$stmt->execute();
+			$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
+			// gestion des ecart entre licence et membre
+			$stmt = $utils->dbc->prepare("SELECT count(*) as nbrLicence from Licence");
+			$stmt->execute();
+			$resultsLicences=$stmt->fetchAll(PDO::FETCH_ASSOC);
+			// gestion des ecart entre cmsl et membre
+			$stmt = $utils->dbc->prepare("SELECT count(*) as nbrCmsl from cmsl");
+			$stmt->execute();
+			$resultsCmsl=$stmt->fetchAll(PDO::FETCH_ASSOC);
+			$matMembre= $results[0]['nbrMembre']+1;// we get the new club matricule here
+			if (($results[0]['nbrMembre']==$resultsLicences[0]['nbrLicence'])&&($resultsCmsl[0]['nbrCmsl']==$resultsLicences[0]['nbrLicence']))
+				{
+				$uploaddir = './imgs/membres/';
+				$extenion = pathinfo($photoMembre, PATHINFO_EXTENSION);		
+				// On insere dans cette partie
+				$stmt = $utils->dbc->prepare("INSERT INTO membre VALUES(
+						\"".$matMembre."\",
+						\"".$nomMembre."\",
+						\"".$prenomMembre."\",
+						\"".$dateNaissanceMembre."\",
+						\"".$communeNaissanceMembre."\",
+						\"".$matWilaya."\",
+						\"".$numAct."\",
+						\"".$parentMembre."\",
+						\"".$adrMembre."\",
+						\"".$uploaddir.$nomMembre."_".$prenomMembre."_".$dateNaissanceMembre.".".$extenion."\", \"J\", \"1\",
+						\"".$groupSanguin."\",
+						\"".$dossard."\")"
+				);
+				$stmt->execute();
+				// On insere dans la table LICENCE
+				$noLic="31".sprintf("%'04s",$matMembre)."J";
+				$jour=date('d');
+				$mois=date('m');
+				$annee=date('y');
+				$dateCreation=$annee."-".$mois."-".$jour;
+				$stmt = $utils->dbc->prepare("INSERT INTO licence VALUES(
+						\"".$matMembre."\",
+						\"".$noLic."\",
+						\"".$duree."\",
+						\"".$dateCreation."\",
+						\"".$finValidite."\",
+						\"1\",
+						\"".$dateCreation."\")"
+				);
+				$stmt->execute();
+				// On insere dans la table CMSL
+				$stmt = $utils->dbc->prepare("INSERT INTO cmsl VALUES(
+						\"".$matSaison."\",
+						\"".$matClub."\",
+						\"".$matMembre."\",
+						\"".$matMembre."\",
+						\"1\",
+						\"1\",
+						\"1\",
+						\"".$dateCreation."\")"
+				);
+				$stmt->execute();
+				}
+			else {
+				print "[{\"erreur\": \"Ecart : <b>nbLicence</b>=".$resultsLicences[0]['nbrLicence'].", <b>nbCmsl</b>=".$resultsCmsl[0]['nbrCmsl'].", <b>nbMembre:</b>=".$matMembre-1
+				."<br/>Veuillez verifier la coherence de vos donnees!\"}]";
+			}
+		}
+		else {			
+			print "[
+					{
+					\"erreur\": \"membre dej&agrave; existant sous le matricule :".$resultsDuplication[0]['idMembre'].", dans le club: ".$resultsDuplication[0]['nom_club']."\"}]";
+		}
+	}
 	/**
 	 * Cette méthode retourne la liste des clubs
 	 */
@@ -89,9 +181,9 @@ class ControllerSvc{
 		$utils->databaseConnect($utils->seniorsDatabaseName);	
 		// gathering data
 		$stmt = $utils->dbc->prepare(
-				"SELECT MAT_CLUB, NOM_CLUB "
+				"SELECT MAT_CLUB as matClub, NOM_CLUB as nomClub "
 				."FROM CLUB "
-				."ORDER BY NOM_CLUB ASC"
+				."ORDER BY nomClub ASC"
 		);
 		$stmt->execute();
 		$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -221,6 +313,10 @@ switch($method){
 	}
 	case "ic":{
 		ControllerSvc::insertClub($matDivision, $matLigue, $matWilaya, $nomClub, $nomCompletClub, $adressClub, $dateCreationClub, $numAgrement, $numTel, $numFax, $emailClub, $photoClub, $matSaison);
+		break;
+	}
+	case "im":{
+		ControllerSvc::insertMembre($matDivision, $matClub, $matWilaya, $nomMembre, $prenomMembre, $dateNaissanceMembre, $communeNaissanceMembre, $numAct, $parentMembre, $adrMembre, $groupSanguin, $finValidite, $duree, $dossard, $photoMembre, $matSaison);
 		break;
 	}
 	case "gcl":{
