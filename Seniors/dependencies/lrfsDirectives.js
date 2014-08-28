@@ -48,6 +48,34 @@
 			controllerAs: 'clubsListCtrl'
 		};
 	});
+	// directive pour les informations de clubs pour le tableau
+	app.directive('informationsClubs', function(){
+		return {
+			restrict: 'E',
+			require: 'ngModel',
+			templateUrl: './clubs/informations-clubs.html',
+			controller:function($scope,$http){
+				var clubsInformations = this;
+				clubsInformations.list = [];
+				$scope.method = 'GET';
+			    $scope.url = "./controller.php?method=gci";
+			    $scope.data = "";
+			    $http(
+		        		{
+				            method: $scope.method, 
+				            url: $scope.url,
+				            headers: {'Content-Type': 'application/json'}
+		        		}).
+		        success(
+		        		function(response) 
+		        		{
+		        			clubsInformations.list = response;				        			
+		        		}			        		
+        		).error(function(response) {$scope.data = response || "Request failed";});
+			},
+			controllerAs: 'clubsInformationsCtrl'
+		};
+	});
 	// directive pour la liste des divisions
 	app.directive('divisionsList', function(){
 		return {
