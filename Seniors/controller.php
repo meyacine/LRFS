@@ -208,7 +208,8 @@ class ControllerSvc{
 				."(cds.mat_div = division.mat_div) AND "
 				."(club.mat_wil = wilaya.mat_wil) AND "
 				."(club.mat_lig = ligue.mat_lig) "
-				.")"
+				.") " 
+				."ORDER BY lib_div, nom_club ASC"
 		);
 		$stmt->execute();
 		$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -325,6 +326,7 @@ class ControllerSvc{
 		return $json;
 	}
 }
+
 /**
  *  This part of code is kind of handler whish get from the url the method to call
  */
