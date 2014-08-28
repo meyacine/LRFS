@@ -192,31 +192,6 @@ class ControllerSvc{
 		echo $json;
 	}
 	/**
-	 * Cette méthode retourne la liste des informations des clubs
-	 */
-	public static function getClubsInformations(){
-		// Establishing db connection
-		$utils= new LrfsUtils();
-		$utils->parseDatabasePropetiesFile();
-		$utils->databaseConnect($utils->seniorsDatabaseName);
-		// gathering data
-		$stmt = $utils->dbc->prepare(
-				"SELECT club.mat_club, ligue.lib_lig, lib_wil, lib_div, nom_club, lib_club, adr_club, dat_cre_club, no_agr_club, no_tel_club, no_fax_club, email_club, sigle_club "
-				."FROM club, ligue, wilaya, division, cds "
-				."WHERE ( "
-				."(club.mat_club = cds.mat_club) AND "
-				."(cds.mat_div = division.mat_div) AND "
-				."(club.mat_wil = wilaya.mat_wil) AND "
-				."(club.mat_lig = ligue.mat_lig) "
-				.")"
-		);
-		$stmt->execute();
-		$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
-		$utils = null;
-		$json=ControllerSvc::convertSqlResultToJson($results);
-		echo $json;
-	}
-	/**
 	 * Cette méthode retourne la liste des divisions
 	 */
 	public static function getDivisionsList(){
@@ -362,10 +337,6 @@ switch($method){
 	}
 	case "gwl":{
 		ControllerSvc::getWilayasList();
-		break;
-	}
-	case "gci":{
-		ControllerSvc::getClubsInformations();
 		break;
 	}
 }
