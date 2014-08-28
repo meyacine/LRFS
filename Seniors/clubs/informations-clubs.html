@@ -1,0 +1,53 @@
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+	var clubListTable_Props = 	{
+					col_4: "select", 
+					onchange : true,
+					paging: true,
+					paging_length: 3,
+					rows_counter: true,
+					rows_counter_text: "Liste des Clubs : ",
+					btn_reset: true,
+					loader: true,
+					loader_text: "Filtrage de donnees..."
+				};
+	var tfclubListTable = setFilterGrid( "clubListTable",clubListTable_Props );
+//]]>
+</script>
+<blockquote>
+	<p align="center">Liste des clubs</p>
+</blockquote>
+<table id="clubListTable" cellpadding="0" cellspacing="0" width="100%">
+	<tr>	
+		<th>MAT_CLUB</th>
+		<th>LIGUE</th>
+		<th>WILAYA</th>
+		<th>DIVISION</th>
+		<th>NOM_CLUB</th>
+		<th>LIB_CLUB</th>
+		<th>ADR_CLUB</th>
+		<th>DAT_CRE_CLUB</th>
+		<th>NO_AGR_CLUB</th>
+		<th>NO_TEL_CLUB</th>
+		<th>NO_FAX_CLUB</th>
+		<th>EMAIL_CLUB</th>
+		<th>SIGLE_CLUB</th>
+	</tr>
+<tr ng-repeat="clubInfo in clubsInformationsCtrl.list">
+	<td>{{clubInfo.mat_club}}</td>
+	<td>{{clubInfo.lib_lig}}</td>
+	<td>{{clubInfo.lib_wil}}</td>
+	<td>{{clubInfo.lib_div}}</td>
+	<td>{{clubInfo.nom_club}}</td>
+	<td>{{clubInfo.lib_club}}</td>
+	<td>{{clubInfo.adr_club}}</td>
+	<td>{{clubInfo.dat_cre_club}}</td>
+	<td>{{clubInfo.no_agr_club}}</td>
+	<td>{{clubInfo.no_tel_club}}</td>
+	<td>{{clubInfo.no_fax_club}}</td>
+	<td>{{clubInfo.email_club}}</td>
+	<td>{{clubInfo.sigle_club}}</td>
+	<td>Edit</td>
+	<td>Del</td>
+</tr>
+</table>

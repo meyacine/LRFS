@@ -1,1 +1,1 @@
-<?php
+ 	<informations-clubs></informations-clubs>
