@@ -1,0 +1,56 @@
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+      // we set this value to call the table filter function after that the table been filled with values 
+      var firstDisplay=true;
+      function tableFilterShow(){
+	   	  if (firstDisplay){
+	   		var clubListTable_Props = 	{
+	   				col_2: "select",
+	   				col_4: "select",
+	   				col_5: "select",
+					col_7: "select",
+					onchange : true,
+					paging: true,
+					paging_length: 5,
+					rows_counter: true,
+					rows_counter_text: "Liste des Membres : ",
+					btn_reset: true,
+					loader: true,
+					loader_text: "Filtrage de donnees..."
+				};
+				var tfmembreListTable = setFilterGrid( "membreListTable",clubListTable_Props );  
+	   	  } 
+		firstDisplay = false;
+      }	
+//]]>
+</script>
+<blockquote>
+	<p align="center">Liste des Membres</p>
+</blockquote>
+<table id="membreListTable" cellpadding="0" cellspacing="0" width="100%" onmouseover="tableFilterShow()">
+	<tr>	
+		<th>EDITION</th>
+		<th>SUPPRESSION</th>
+		<th>CLUB</th>
+		<th>MAT_MEMBRE</th>
+		<th>NOM</th>
+		<th>PRENOM</th>
+		<th>DDN</th>
+		<th>LIEU NAISSANCE</th>
+		<th>LICENCE</th>
+		<th>PHOTO</th>
+	</tr>
+<tr ng-repeat="membreInfo in membresInformationsCtrl.list">
+	<td><a href="edit.php">Edit</a></td>
+	<td>Del</td>
+	<td>{{membreInfo.nom_club}}</td>
+	<td>{{membreInfo.mat_mem}}</td>
+	<td>{{membreInfo.nom_mem}}</td>
+	<td>{{membreInfo.pre_mem}}</td>
+	<td>{{membreInfo.ddn_mem}}</td>
+	<td>{{membreInfo.ldnc_mem}}</td>
+	<td>lien_licence</td>
+	<td><img ng-src="{{membreInfo.photo_mem}}" width="60" height="80"/></td>
+</tr>
+</table>
+

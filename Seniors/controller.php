@@ -218,6 +218,29 @@ class ControllerSvc{
 		echo $json;
 	}
 	/**
+	 * Cette methode retourne la liste des informations des membres
+	 */
+	public static function getMembresInformations(){
+		// Establishing db connection
+		$utils= new LrfsUtils();
+		$utils->parseDatabasePropetiesFile();
+		$utils->databaseConnect($utils->seniorsDatabaseName);
+		// gathering data
+		$stmt = $utils->dbc->prepare(
+				"SELECT club.nom_club, membre.mat_mem, nom_mem, pre_mem, ddn_mem, ldnc_mem, photo_mem "
+				."FROM membre, cmsl, club " 
+				."WHERE ( "
+				    ."(membre.mat_mem = cmsl.mat_mem) AND "
+				    ."(cmsl.mat_club = club.mat_club) "
+				    .") "
+				."ORDER BY nom_club, nom_mem, pre_mem ASC");
+		$stmt->execute();
+		$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
+		$utils = null;
+		$json=ControllerSvc::convertSqlResultToJson($results);
+		echo $json;
+	}
+	/**
 	 * Cette méthode retourne la liste des divisions
 	 */
 	public static function getDivisionsList(){
@@ -368,6 +391,10 @@ switch($method){
 	}
 	case "gci":{
 		ControllerSvc::getClubsInformations();
+		break;
+	}
+	case "gmi":{
+		ControllerSvc::getMembresInformations();
 		break;
 	}
 }

@@ -76,6 +76,34 @@
 			controllerAs: 'clubsInformationsCtrl'
 		};
 	});
+	// directive pour les informations de membres pour le tableau
+	app.directive('informationsJoueurs', function(){
+		return {
+			restrict: 'E',
+			require: 'ngModel',
+			templateUrl: './joueurs/informations-joueurs.html',
+			controller:function($scope,$http){
+				var membresInformations = this;
+				membresInformations.list = [];
+				$scope.method = 'GET';
+			    $scope.url = "./controller.php?method=gmi";
+			    $scope.data = "";
+			    $http(
+		        		{
+				            method: $scope.method, 
+				            url: $scope.url,
+				            headers: {'Content-Type': 'application/json'}
+		        		}).
+		        success(
+		        		function(response) 
+		        		{
+		        			membresInformations.list = response;				        			
+		        		}			        		
+        		).error(function(response) {$scope.data = response || "Request failed";});
+			},
+			controllerAs: 'membresInformationsCtrl'
+		};
+	});
 	// directive pour la liste des divisions
 	app.directive('divisionsList', function(){
 		return {

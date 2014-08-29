@@ -1,1 +1,1 @@
-<?php
+<informations-joueurs></informations-joueurs>

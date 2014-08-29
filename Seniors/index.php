@@ -27,7 +27,7 @@
 <!-- required js libraries -->
 <script src="../js/jquery-1.11.1.min.js"></script>
 <script src="../js/jquery-ui.js"></script>
-<script src="../js/jquery.jtable.js"></script>
+<!-- script src="../js/jquery.jtable.js"></script -->
 <script src="../js/angular.js"></script>
 <script src="../js/angular-route.js"></script>
 <script src="../js/bootstrap.js"></script>
