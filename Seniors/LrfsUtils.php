@@ -247,7 +247,7 @@ class LrfsUtils {
 			."NO_TEL_CLUB decimal(14,0) DEFAULT NULL, "
 			."NO_FAX_CLUB decimal(14,0) DEFAULT NULL, "
 			."EMAIL_CLUB char(50) DEFAULT NULL, "
-			."SIGLE_CLUB char(50) DEFAULT NULL, "
+			."SIGLE_CLUB char(100) DEFAULT NULL, "
 			."PRIMARY KEY (MAT_CLUB) "
 			.") ENGINE=MyISAM DEFAULT CHARSET=latin1; "
 			

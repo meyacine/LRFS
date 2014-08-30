@@ -159,6 +159,8 @@ class ControllerSvc{
 						\"".$dateCreation."\")"
 				);
 				$stmt->execute();
+				// Generation de la licence de joueurs 
+				ControllerSvc::generateLicenceMembre($matMembre);
 				}
 			else {
 				print "[{\"erreur\": \"Ecart : <b>nbLicence</b>=".$resultsLicences[0]['nbrLicence'].", <b>nbCmsl</b>=".$resultsCmsl[0]['nbrCmsl'].", <b>nbMembre:</b>=".$matMembre-1
@@ -170,6 +172,250 @@ class ControllerSvc{
 					{
 					\"erreur\": \"membre dej&agrave; existant sous le matricule :".$resultsDuplication[0]['idMembre'].", dans le club: ".$resultsDuplication[0]['nom_club']."\"}]";
 		}
+	}
+	
+	/**
+	 * Cette méthode permet de generer la licences de joueurs 
+	 * @param $matMembre
+	 */
+	public static function generateLicenceMembre($matMembre){
+		// Connexion BDD
+		$utils = new LrfsUtils();
+		$utils->parseDatabasePropetiesFile();
+		$utils->databaseConnect($utils->seniorsDatabaseName);
+		// Recupperation de la saison
+		$req="SELECT mat_sai FROM saison WHERE (actif_sai='1') ";
+		$stmt = $utils->dbc->prepare($req);
+		$stmt->execute();
+		$ligne=$stmt->fetchAll(PDO::FETCH_ASSOC);
+		$mat_sai=$ligne[0]['mat_sai'];
+		// Creation de l'image
+		$image=imagecreatetruecolor (500,300 );
+		$blanc = imagecolorallocate($image, 255, 255, 255);
+		$noir = imagecolorallocate($image, 0, 0, 0);
+		$rouge = imagecolorallocate($image, 255, 0, 0);
+		$vert = imagecolorallocate($image, 0, 255, 0);
+		$bleu = imagecolorallocate($image, 0, 0, 255);
+		$gris= imagecolorallocate($image, 128, 128, 128);
+		imagerectangle($image, 0, 0, 499, 299, $blanc);
+		imagerectangle($image, 5, 5, 495, 295, $vert);
+		imagerectangle($image, 10,10, 490, 290, $rouge);
+		imagerectangle($image, 10, 10, 489, 289, $blanc);
+		imagerectangle($image, 11, 11, 488, 288, $blanc);
+		imagerectangle($image, 12, 12, 487, 287, $blanc);
+		imagerectangle($image, 13, 13, 486, 286, $blanc);
+		imagefill($image, 1, 1, $vert);
+		imagefill($image, 6, 6, $rouge);
+		//On recuppere l'image à mettre au fond de la licence
+		$fond="./imgs/lnf_fond.jpg";
+		$data_fond=getimagesize($fond);
+		// 0 pour la largeur
+		// 1 pour la hauteur
+		// 2 pour le type 1=gif 2=jpg 3=png
+		// 3 pour la chaine complete "height=xxx width=yyy"
+		$fondtoload=imagecreatefromjpeg($fond);
+		$larg=$data_fond[0];
+		$haut=$data_fond[1];
+		$x=500;
+		$y=($x*$haut)/$larg;
+		if ($y>$x) { $y=$x; $x=($y*$larg)/$haut; }
+		$posx=(100-$x)/2;
+		$posy=(100-$y)/2;
+		imagecopyresized($image, $fondtoload, 16, 16, 0, 0, 468, 268, $data_fond[0], $data_fond[1]);
+		imagerectangle($image, 385, 15, 485, 115, $noir);
+		// charger la photo du joueur avec sa taille
+		$req="SELECT M.nom_mem, M.pre_mem, M.ddn_mem, M.ldnc_mem, M.ldnw_mem, M.photo_mem, M.type_mem, C.nom_club, C.Lib_club, L.no_lic, S.dat_deb_sai, S.dat_fin_sai, L.dat_cre_lic, L.val_lic, M.groupe_mem,M.no_doss ".
+			 "FROM membre M, club C, cmsl, saison S, licence L ".
+			 "WHERE ( (S.actif_sai='1') AND (M.mat_mem='$matMembre') AND (M.mat_mem=cmsl.mat_mem) AND ".
+			 "(cmsl.mat_club=C.mat_club) AND (cmsl.mat_sai=S.mat_sai) AND (cmsl.mat_lic=L.mat_lic) ) ".
+			 "GROUP BY M.nom_mem, M.pre_mem, M.ddn_mem, M.ldnc_mem, M.ldnw_mem, M.photo_mem, C.nom_club, S.dat_deb_sai ";
+		$stmt = $utils->dbc->prepare($req);
+		$stmt->execute();
+		$ligne=$stmt->fetchAll(PDO::FETCH_ASSOC);
+		$photo_mem=$ligne[0]['photo_mem'];
+		if ($photo_mem!="")
+		{
+			$new_lic=$ligne[0]['no_lic'];
+			$data_photo=getimagesize($photo_mem);
+			switch ($data_photo[2])
+			{
+				CASE 1 : $imagetoload=imagecreatefromgif($photo_mem); break;
+				CASE 2 : $imagetoload=imagecreatefromjpeg($photo_mem); break;
+				CASE 3 : $imagetoload=imagecreatefrompng($photo_mem); break;
+			}// End Switch
+			//collage de la photo sur la licence:
+			$larg=$data_photo[0];
+			$haut=$data_photo[1];
+			$x=99;
+			$y=($x*$haut)/$larg;
+			if ($y>$x) { $y=$x; $x=($y*$larg)/$haut; }
+			$posx=(100-$x)/2;
+			$posy=(100-$y)/2;
+			imagecopyresized($image, $imagetoload, 386+$posx, 16+$posy, 0, 0, $x, $y, $data_photo[0], $data_photo[1]);
+			// collage du logo de la LNF
+			$logo="./imgs/lrfs.jpg";
+			$data_logo=getimagesize($logo);
+			$imagetoload=imagecreatefromjpeg($logo);
+			$larg=$data_logo[0];
+			$haut=$data_logo[1];
+			$x=60;
+			$y=($x*$haut)/$larg;
+			if ($y>$x) { $y=$x; $x=($y*$larg)/$haut; }
+			$posx=(60-$x)/2;
+			$posy=(60-$y)/2;
+			imagecopyresized($image, $imagetoload, 16+$posx, 13+$posy, 0, 0, $x, $y, $data_logo[0], $data_logo[1]);
+			// titre 1
+			$police="../fonts/tahomabd.ttf";
+			$taille=10;
+			$texte="FEDERATION ALGERIENNE DE FOOTBALL";
+			$rectangle=imagettfbbox($taille, 0, $police, $texte);
+			$lp=$rectangle[2]-$rectangle[0];
+			$hp=$rectangle[3]-$rectangle[5];
+			$x=(320-$lp)/2;
+			$y=20+$hp;
+			ImageTTFText($image, $taille, 0, $x+66, $y, $noir, $police, $texte);
+			// titre2
+			$police="../fonts/ariblk.ttf";
+			$taille=10;
+			$texte="LIGUE REGIONALE DE FOOTBALL DE SAIDA";
+			$rectangle=imagettfbbox($taille, 0, $police, $texte);
+			$lp=$rectangle[2]-$rectangle[0];
+			$hp=$rectangle[3]-$rectangle[5];
+			$x=(320-$lp)/2;
+			$y=$y+20+$hp;
+			ImageTTFText($image, $taille, 0, $x+68, $y-15, $noir, $police, $texte);
+			$texte="Gestion de championnat Amateur";
+			ImageTTFText($image, $taille, 0, 110, 60, $noir, $police, $texte);
+			//ligne de séparation
+			$y=$y+$hp;
+			imageline($image, 15, $y, 385, $y, $noir);
+			$police="../fonts/ariblk.ttf";
+			$taille=10;
+			switch($ligne[0]['type_mem']){
+				case 'J':{
+					$texte="LICENCE JOUEUR SENIOR : ".$new_lic;
+					break;
+				}
+				case 'D':{
+					$texte="LICENCE DIRIGEANT : ".$new_lic;
+					break;
+				}
+				case 'E':{
+					$texte="LICENCE ENTRAINEUR :".$new_lic;
+					break;
+				}
+				case 'M':{
+					$texte="LICENCE MEDECIN : ".$new_lic;
+					break;
+				}
+			}
+			$rectangle=imagettfbbox($taille, 0, $police, $texte);
+			$lp=$rectangle[2]-$rectangle[0];
+			$hp=$rectangle[3]-$rectangle[5];
+			$x=(370-$lp)/2;
+			$y=$y+20+$hp;
+			ImageTTFText($image, $taille, 0, $x+16, $y, $noir, $police, $texte);
+			imagerectangle($image, $rectangle[6]+$x+10, $rectangle[7]+$y-5, $rectangle[2]+$x+23, $rectangle[3]+$y+10, $noir);
+			// le nom et le prénom
+			$police=5;
+			$texte="NOM : ".$ligne[0]['nom_mem']."   PRENOM : ".$ligne[0]['pre_mem'];
+			$y=125;
+			$lentext=strlen($texte)*imagefontwidth($police);
+			$hp=imagefontheight($police);
+			$x=5;
+			$textlel=1;
+			if (((470-$textlel)/2) < 0) { $police=$police-1; }
+			imagestring($image, $police, $x+16, $y, $texte, $noir);
+			// la date de naissance
+			$police=5;
+			$texte="DATE DE NAISSANCE : ".ControllerSvc::decode_date($ligne[0]['ddn_mem'])." a ".$ligne[0]['ldnc_mem']." (".$ligne[0]['ldnw_mem'].")";
+			$textlen=strlen($texte)*imagefontwidth($police);
+			$y=150;
+			$x=5;
+			if ($x<0) { $x=5; }
+			imagestring($image, $police, $x+16, $y, $texte, $noir);
+			// Le club :
+			$police=5;
+			$texte="CLUB : ".$ligne[0]['nom_club']." (".$ligne[0]['Lib_club'].")";
+			$y=175;
+			$lentext=strlen($texte)*imagefontwidth($police);
+			$hp=imagefontheight($police);
+			$x=5;
+			if (((470-$textlel)/2) < 0) { $police=$police-1; }
+			imagestring($image, $police, $x+16, $y, $texte, $noir);
+			// La validité :
+			$police=5;
+			$date=ControllerSvc::decode_date($ligne[0]['dat_cre_lic']);
+			ControllerSvc::decomp_date($date, $j, $m, $a);
+			$a=$a+$ligne[0]['val_lic'];
+			$dateValiditeQuery="SELECT * from validite";
+			$stmtValidite = $utils->dbc->prepare($dateValiditeQuery);
+			$stmtValidite->execute();
+			$ligneValidite=$stmtValidite->fetchAll(PDO::FETCH_ASSOC);
+			$ddd=$ligneValidite[0]['DD'];
+			$ddf=$ligneValidite[0]['DF'];
+			$texte="VALIDITE du ".ControllerSvc::inverse($ddd)." au ".ControllerSvc::inverse($ddf);
+			$y=200;
+			$lentext=strlen($texte)*imagefontwidth($police);
+			$hp=imagefontheight($police);
+			$x=5;
+			if (((470-$textlel)/2) < 0) { $police=$police-1; }
+			imagestring($image, $police, $x+16, $y, $texte, $noir);
+			// groupage
+			$police=5;
+			$texte="GROUPAGE : ".$ligne[0]['groupe_mem'];
+			$y=225;
+			$lentext=strlen($texte)*imagefontwidth($police);
+			$hp=imagefontheight($police);
+			$x=5;
+			if (((470-$textlel)/2) < 0) { $police=$police-1; }
+			imagestring($image, $police, $x+16, $y, $texte, $noir);
+			// cachet et signature
+			//collage de l'arriere plan du dossad
+			if ($ligne[0]['type_mem']=="J")
+			{
+				$logo="./imgs/fair_play.jpg";
+				$data_logo=getimagesize($logo);
+				$imagetoload=imagecreatefromjpeg($logo);
+				$larg=$data_logo[0];
+				$haut=$data_logo[1];
+				$x=60;
+				$y=($x*$haut)/$larg;
+				if ($y>$x) { $y=$x; $x=($y*$larg)/$haut; }
+				$posx=(60-$x)/2;
+				$posy=(60-$y)/2;
+				imagecopyresized($image, $imagetoload, 390, 194, 0, 0, $x+50, $y+30, $data_logo[0], $data_logo[1]);
+				//------------------------------------
+				imagerectangle($image, /*385*/390, /*205*/194, 485, 284, $noir);
+				$police=2;
+				$texte="Dossard";
+				$y=220;
+				$x=(100-(strlen($texte)*imagefontwidth($police)))/2;
+				$hp=imagefontheight($police);
+				$texte=sprintf("%'02s",$ligne[0]['no_doss']);
+				$y=$y+$hp;
+				$x=(100-(strlen($texte)*imagefontwidth($police)))/2;
+				$hp=imagefontheight($police);
+				$font = '../fonts/arial.ttf';
+				imagettftext($image, 56, 0,$x+355,$y+32, $rouge, $font, $texte);
+				imagettftext($image, 8, 0,$x+380,$y+50, $noir, $font, "Dossard");
+			}
+			//cachet et signature
+			$police=2;
+			$texte="Cachet et Signature";
+			$y=220;
+			$x=(100-(strlen($texte)*imagefontwidth($police)))/2;
+			$hp=imagefontheight($police);
+			//imagestring($image, $police, 190, $y+47, $texte, $noir);
+			imagettftext($image, 8, 0,190,$y+60, $noir, $font, $texte);
+			//----------------------
+			if (!file_exists("./imgs/licences/".$ligne[0]['nom_club'])) mkdir("./imgs/licences/".$ligne[0]['nom_club']);
+			imagejpeg($image, "./imgs/licences/".$ligne[0]['nom_club']."/LIC".sprintf("%'05s",$matMembre)."_".$ligne[0]['nom_mem']."_".$ligne[0]['pre_mem'].".jpg");
+			$licence="./imgs/licences/".$ligne[0]['nom_club']."/LIC".sprintf("%'05s",$matMembre)."_".$ligne[0]['nom_mem']."_".$ligne[0]['pre_mem'].".jpg";
+			imagedestroy($image);
+		}
+		else $licence="rien.jpg";
+		return $licence;
 	}
 	/**
 	 * Cette méthode retourne la liste des clubs
@@ -347,6 +593,29 @@ class ControllerSvc{
 		$json = str_replace("â", "a",$json);
 		$json = str_replace("ô", "o",$json);
 		return $json;
+	}
+	
+	private static function inverse($dd)
+	{
+		$jj=substr($dd,8,2);
+		$mm=substr($dd,5,2);
+		$aa=substr($dd,0,4);
+		$res=$jj."/".$mm."/".$aa;
+		return $res;
+	}
+	private static function decode_date($date)
+	{
+		$a=substr($date, 0, 4);
+		$m=substr($date, 5, 2);
+		$j=substr($date, 8, 2);
+		$d=$j."/".$m."/".$a;
+		return $d;
+	}
+	private static function decomp_date($d, &$j, &$m, &$a)
+	{
+		$j=substr($d, 0, 2);
+		$m=substr($d, 3, 2);
+		$a=substr($d, -4);
 	}
 }
 

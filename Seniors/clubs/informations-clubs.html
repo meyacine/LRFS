@@ -5,9 +5,9 @@
       function tableFilterShow(){
 	   	  if (firstDisplay){
 	   		var clubListTable_Props = 	{
+	   				col_3: "select",
 	   				col_4: "select",
-	   				col_5: "select",
-					col_6: "select",
+					col_5: "select",
 					onchange : true,
 					paging: true,
 					paging_length: 5,
@@ -29,7 +29,6 @@
 <table id="clubListTable" cellpadding="0" cellspacing="0" width="100%" onmouseover="tableFilterShow()">
 	<tr>	
 		<th>EDITION</th>
-		<th>SUPPRESSION</th>
 		<th>MAT_CLUB</th>
 		<th>LIGUE</th>
 		<th>WILAYA</th>
@@ -46,7 +45,6 @@
 	</tr>
 <tr ng-repeat="clubInfo in clubsInformationsCtrl.list">
 	<td><a href="edit.php">Edit</a></td>
-	<td>Del</td>
 	<td>{{clubInfo.mat_club}}</td>
 	<td>{{clubInfo.lib_lig}}</td>
 	<td>{{clubInfo.lib_wil}}</td>

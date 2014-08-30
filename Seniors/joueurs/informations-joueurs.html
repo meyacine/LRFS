@@ -5,10 +5,10 @@
       function tableFilterShow(){
 	   	  if (firstDisplay){
 	   		var clubListTable_Props = 	{
-	   				col_2: "select",
+	   				col_1: "select",
+	   				col_3: "select",
 	   				col_4: "select",
-	   				col_5: "select",
-					col_7: "select",
+					col_6: "select",
 					onchange : true,
 					paging: true,
 					paging_length: 5,
@@ -30,7 +30,6 @@
 <table id="membreListTable" cellpadding="0" cellspacing="0" width="100%" onmouseover="tableFilterShow()">
 	<tr>	
 		<th>EDITION</th>
-		<th>SUPPRESSION</th>
 		<th>CLUB</th>
 		<th>MAT_MEMBRE</th>
 		<th>NOM</th>
@@ -42,7 +41,6 @@
 	</tr>
 <tr ng-repeat="membreInfo in membresInformationsCtrl.list">
 	<td><a href="edit.php">Edit</a></td>
-	<td>Del</td>
 	<td>{{membreInfo.nom_club}}</td>
 	<td>{{membreInfo.mat_mem}}</td>
 	<td>{{membreInfo.nom_mem}}</td>
@@ -50,7 +48,23 @@
 	<td>{{membreInfo.ddn_mem}}</td>
 	<td>{{membreInfo.ldnc_mem}}</td>
 	<td>lien_licence</td>
-	<td><img ng-src="{{membreInfo.photo_mem}}" width="60" height="80"/></td>
+	<td>
+	<div class="modal fade" id="licenceJoueur" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Licence Joueurs</h4>
+      </div>
+      <div class="modal-body">
+        <img src="{{membreInfo.photo_mem}}" width="500" Height="300"/>        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+	<img ng-src="{{membreInfo.photo_mem}}" width="60" height="80" data-toggle="modal" data-target="#licenceJoueur"/></td>	
 </tr>
 </table>
-
