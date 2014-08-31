@@ -284,6 +284,7 @@ class LrfsUtils {
 			."DAT_FIN_LIC date DEFAULT NULL, "
 			."MAT_UTI decimal(4,0) DEFAULT NULL, "
 			."DAT_GEN date DEFAULT NULL, "
+			."LIEN_LIC CHAR(250) DEFAULT NULL, "
 			."PRIMARY KEY (MAT_LIC) "
 			.") ENGINE=MyISAM DEFAULT CHARSET=latin1; "
 					

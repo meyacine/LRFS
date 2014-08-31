@@ -110,7 +110,7 @@ class ControllerSvc{
 			$stmt = $utils->dbc->prepare("SELECT count(*) as nbrCmsl from cmsl");
 			$stmt->execute();
 			$resultsCmsl=$stmt->fetchAll(PDO::FETCH_ASSOC);
-			$matMembre= $results[0]['nbrMembre']+1;// we get the new club matricule here
+			$matMembre= $results[0]['nbrMembre']+1;
 			if (($results[0]['nbrMembre']==$resultsLicences[0]['nbrLicence'])&&($resultsCmsl[0]['nbrCmsl']==$resultsLicences[0]['nbrLicence']))
 				{
 				$uploaddir = './imgs/membres/';
@@ -137,6 +137,10 @@ class ControllerSvc{
 				$mois=date('m');
 				$annee=date('y');
 				$dateCreation=$annee."-".$mois."-".$jour;
+				// recupperation du nom du club
+				$requete = $utils->dbc->prepare("SELECT nom_club from club");
+				$requete->execute();
+				$resultatClub=$requete->fetchAll(PDO::FETCH_ASSOC);
 				$stmt = $utils->dbc->prepare("INSERT INTO licence VALUES(
 						\"".$matMembre."\",
 						\"".$noLic."\",
@@ -144,7 +148,8 @@ class ControllerSvc{
 						\"".$dateCreation."\",
 						\"".$finValidite."\",
 						\"1\",
-						\"".$dateCreation."\")"
+						\"".$dateCreation."\", 
+						\"./imgs/licences/".$resultatClub[0]['nom_club']."/LIC".sprintf("%'05s",$matMembre)."_".$nomMembre."_".$prenomMembre.".jpg\")"
 				);
 				$stmt->execute();
 				// On insere dans la table CMSL
@@ -473,10 +478,11 @@ class ControllerSvc{
 		$utils->databaseConnect($utils->seniorsDatabaseName);
 		// gathering data
 		$stmt = $utils->dbc->prepare(
-				"SELECT club.nom_club, membre.mat_mem, nom_mem, pre_mem, ddn_mem, ldnc_mem, photo_mem "
-				."FROM membre, cmsl, club " 
+				"SELECT club.nom_club, membre.mat_mem, nom_mem, pre_mem, ddn_mem, ldnc_mem, photo_mem, lien_lic "
+				."FROM membre, cmsl, club, licence " 
 				."WHERE ( "
 				    ."(membre.mat_mem = cmsl.mat_mem) AND "
+					."(cmsl.mat_lic = licence.mat_lic) AND "
 				    ."(cmsl.mat_club = club.mat_club) "
 				    .") "
 				."ORDER BY nom_club, nom_mem, pre_mem ASC");
