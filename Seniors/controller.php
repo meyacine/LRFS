@@ -577,6 +577,25 @@ class ControllerSvc{
 	}
 	
 	/**
+	* Retourne un Json contenant les wilayas et les nombres de joueurs présents en BDD et nés dans ces wilaya
+	*/
+	public static function getNombreMembreParWilayas(){
+		// Establishing db connection
+		$utils= new LrfsUtils();
+		$utils->parseDatabasePropetiesFile();
+		$utils->databaseConnect($utils->seniorsDatabaseName);
+		// gathering data
+		$stmt = $utils->dbc->prepare("SELECT lib_wil, count(membre.mat_mem) AS nbr_mem FROM membre, wilaya WHERE (membre.ldnw_mem = wilaya.mat_wil) GROUP BY wilaya.mat_wil ");
+		$stmt->execute();
+		$results=$stmt->fetchAll(PDO::FETCH_ASSOC);
+		$json=ControllerSvc::convertSqlResultToJson($results);
+		$utils = null;
+		echo $json;
+	}
+	
+	// usefull methods
+	
+	/**
 	 * Converti le resultat sql à un tableau Json
 	 * @param $SqlArray
 	 */
@@ -598,6 +617,7 @@ class ControllerSvc{
 		$json = str_replace("ï", "i",$json);
 		$json = str_replace("â", "a",$json);
 		$json = str_replace("ô", "o",$json);
+		if ($json=="]") $json="[]";
 		return $json;
 	}
 	
@@ -670,6 +690,10 @@ switch($method){
 	}
 	case "gmi":{
 		ControllerSvc::getMembresInformations();
+		break;
+	}
+	case "gnmpw":{
+		ControllerSvc::getNombreMembreParWilayas();
 		break;
 	}
 }

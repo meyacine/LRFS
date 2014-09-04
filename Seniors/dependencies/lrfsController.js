@@ -236,5 +236,45 @@
 	lrfsController.controller('EditJoueurCtrl', function($scope, $http, $templateCache){});
 	lrfsController.controller('DuplicationJoueurCtrl', function($scope, $http, $templateCache){});
 	lrfsController.controller('DetailsStatsCtrl', function($scope, $http, $templateCache){});
-	lrfsController.controller('GraphicStatsCtrl', function($scope, $http, $templateCache){});
+	lrfsController.controller('GraphicStatsCtrl', function($scope, $http, $templateCache){
+	// Here is the graphic code
+	// 1 - first one concerns pie chart for the count of members per wilaya
+		$scope.method = 'GET';
+		$scope.url = "./controller.php?method=gnmpw";
+		$scope.data = "";
+		$http({
+			method: $scope.method, 
+			url: $scope.url,
+			headers: {'Content-Type': 'application/json'}
+		}).
+		success(
+				function(response) 
+				{
+					displayPieChart(response);				        			
+				}
+				
+		).
+		error(function(response) {
+			$scope.data = response || "Request failed";
+		});
+	});
+	function displayPieChart(data)
+	{
+		var chartData = [];
+        $.each(data, function(i, result) {
+            chartData.push(result);
+        });
+        this.nombreParWilayaChart = new AmCharts.AmPieChart();
+        this.nombreParWilayaChart.titleField = "lib_wil";
+        this.nombreParWilayaChart.valueField = "nbr_mem";
+        this.nombreParWilayaChart.dataProvider = chartData;
+        var legend = new AmCharts.AmLegend();
+        legend.align="center";
+        legend.markerType="circle";
+        this.nombreParWilayaChart.addLegend(legend);
+        this.nombreParWilayaChart.balloonText = "<b> Wilaya : </b> [[lib_wil]] <b> Nombre :</b> [[value]] <b> Taux : </b> ([[percents]]%) ";
+        // TODO add title for the chart here 
+        this.nombreParWilayaChart.write("wilayaCountdiv");
+        if (data.length==0) $('#wilayaCountdiv').html("<center><span id=\"animationSandbox\" style=\"display: block;\" class=\"rubberBand animated\"><img src=\"../css/images/sorry.png\"></span><span id=\"animationSandbox\" style=\"display: block;\" class=\"zoomIn animated\"><h2>Aucun membre ne semble &ecirc;tre pr&eacutesent sur la BDD. </h2></span></center>");
+	}
 })();
